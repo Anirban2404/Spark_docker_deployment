@@ -1,0 +1,71 @@
+version: '3.5'
+
+services:
+
+  spark-master:
+    image: docgroupvandy/python_spark
+    command: >
+        bin/spark-class org.apache.spark.deploy.master.Master -h spark-master 
+    hostname: spark-master
+    environment:
+      MASTER: spark://spark-master:7077
+      SPARK_CONF_DIR: /conf
+      SPARK_PUBLIC_DNS: ${EXTERNAL_IP}
+    ports:
+      - 4040:4040
+      - 6066:6066
+      - 7077:7077
+      - 8080:8080
+      - 9999:9999
+    deploy:
+       mode: replicated
+       replicas: 1
+       labels: [APP=SPARKMODEL]
+       restart_policy:
+         condition: on-failure
+         delay: 10s
+         max_attempts: 3
+         window: 120s
+       placement:
+         constraints: [node.role == manager]
+
+  spark-worker:
+    image: docgroupvandy/python_spark
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    hostname: spark-worker
+    environment:
+      SPARK_CONF_DIR: /conf
+      SPARK_WORKER_CORES: 16 
+      SPARK_WORKER_MEMORY: 8g
+      SPARK_PUBLIC_DNS: ${EXTERNAL_IP}
+    depends_on:
+      - spark-master
+    ports:
+      - 8081:8081
+    deploy:
+       mode: replicated
+       replicas: 3
+       labels: [APP=SPARKMODEL]
+       restart_policy:
+         condition: on-failure
+         delay: 10s
+         max_attempts: 3
+         window: 120s
+       placement:
+         constraints: [node.role == worker]
+
+  visualizer:
+     image: dockersamples/visualizer
+     ports:
+       - "8088:8080"
+     stop_grace_period: 1m30s
+     volumes:
+       - "/var/run/docker.sock:/var/run/docker.sock"
+     deploy:
+       replicas: 1
+       placement:
+         constraints: [node.role == manager]
+
+networks:
+  backend: 
+    driver: overlay
