@@ -7,13 +7,14 @@
     ```
 
 2. Run the script:
-```
-export CONTAINER_ID=$(docker ps --filter name=spark-master --format "{{.ID}}")
-docker exec -it $CONTAINER_ID  /bin/bash
-```
+    ```
+    $ export CONTAINER_ID=$(docker ps --filter name=spark-master --format "{{.ID}}")
+    $ docker exec -it $CONTAINER_ID  /bin/bash
+    ```
 3. Start Jupyter:
-nohup jupyter notebook --allow-root &
+    ```
+    $ nohup jupyter notebook --allow-root &
+    ```
 
-4.
-For Jupyter: Go to <<ip>>:9999 
-For Spark: Go to <<ip>>:8080 
+4. For Jupyter: Go to <<ip>>:9999 
+   For Spark: Go to <<ip>>:8080 
