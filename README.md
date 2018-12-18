@@ -16,5 +16,5 @@
     $ nohup jupyter notebook --allow-root &
     ```
 
-4. For Jupyter: Go to <<ip>>:9999 
+4. For Jupyter: Go to <<ip>>:8888 
    For Spark: Go to <<ip>>:8080 
