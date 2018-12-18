@@ -3,9 +3,8 @@ version: '3.5'
 services:
 
   spark-master:
-    image: docgroupvandy/python_spark
-    command: >
-        bin/spark-class org.apache.spark.deploy.master.Master -h spark-master 
+    image: docgroupvandy/python_spark:latest
+    command: bin/spark-class org.apache.spark.deploy.master.Master -h spark-master 
     hostname: spark-master
     environment:
       MASTER: spark://spark-master:7077
@@ -16,7 +15,7 @@ services:
       - 6066:6066
       - 7077:7077
       - 8080:8080
-      - 9999:9999
+      - 8888:8888
     deploy:
        mode: replicated
        replicas: 1
@@ -30,7 +29,7 @@ services:
          constraints: [node.role == manager]
 
   spark-worker:
-    image: docgroupvandy/python_spark
+    image: docgroupvandy/python_spark:latest
     command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     hostname: spark-worker
     environment:
